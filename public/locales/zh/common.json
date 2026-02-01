@@ -1,0 +1,22 @@
+{
+  "unlock_button": "AI挑战解锁内容",
+  "unlock_challenge": "React的核心特性是什么？(提示：组件化)",
+  "login_to_unlock": "登录解锁高级内容",
+  "translate_button": "使用AI翻译",
+  "ai_translation": "AI翻译结果",
+  "translating": "翻译中...",
+  "unlock_failed": "挑战失败！请再试一次",
+  "translation_failed": "翻译服务暂不可用",
+  "comments": "评论",
+  "comments_note": "评论由 Giscus 提供支持。需要 GitHub 账号。",
+  "tags": "标签",
+  "all_tags": "所有标签",
+  "search": "搜索",
+  "read_more": "阅读更多",
+  "posted_on": "发布于",
+  "by": "作者",
+  "no_posts": "未找到文章",
+  "home": "首页",
+  "blog": "博客",
+  "about": "关于"
+}
