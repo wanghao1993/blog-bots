@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Home",
+    "blog": "Blog",
+    "about": "About",
+    "tags": "Tags",
+    "search": "Search",
+    "readMore": "Read More",
+    "share": "Share",
+    "translate": "Translate",
+    "summary": "Summary",
+    "comments": "Comments",
+    "backToHome": "Back to Home",
+    "noResults": "No results found",
+    "loading": "Loading...",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "reset": "Reset to Original"
+  },
+  "home": {
+    "hero": {
+      "title": "Tech Blog ⚡",
+      "subtitle": "Exploring code, tech, and innovation",
+      "cta": "Explore Posts"
+    },
+    "latestPosts": "Latest Posts",
+    "allPosts": "All Posts"
+  },
+  "blog": {
+    "title": "Blog Posts",
+    "publishedOn": "Published on",
+    "readTime": "min read",
+    "tags": "Tags"
+  },
+  "about": {
+    "title": "About Me",
+    "description": "Learn more about this blog and its creator"
+  },
+  "search": {
+    "placeholder": "Search posts...",
+    "resultsFor": "Results for",
+    "noResults": "No posts found matching your search"
+  },
+  "tags": {
+    "title": "All Tags",
+    "postsWithTag": "Posts tagged with"
+  }
+}

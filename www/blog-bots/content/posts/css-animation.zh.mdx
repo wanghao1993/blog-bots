@@ -1,0 +1,97 @@
+---
+title: "CSS 动画魔法 ✨"
+date: "2024-01-25"
+excerpt: "探索 CSS 动画的力量，为你的网站创建令人惊叹的视觉效果。"
+tags: ["css", "动画", "web开发", "教程"]
+coverImage: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=800&q=80"
+author: "博客作者"
+---
+
+# CSS 动画魔法 ✨
+
+动画让网站变得生动！让我们探索如何创建美丽的 CSS 动画。
+
+## 为什么动画很重要
+
+好的动画可以：
+
+- 改善用户体验
+- 引导用户注意力
+- 让界面感觉更有响应性
+- 为品牌增添个性
+
+## 基本动画属性
+
+### 关键帧
+
+使用 `@keyframes` 定义动画：
+
+```css
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+```
+
+### 应用动画
+
+```css
+.floating-element {
+  animation: float 3s ease-in-out infinite;
+}
+```
+
+## 高级技巧
+
+### 交错动画
+
+```css
+.item:nth-child(1) { animation-delay: 0s; }
+.item:nth-child(2) { animation-delay: 0.1s; }
+.item:nth-child(3) { animation-delay: 0.2s; }
+```
+
+### 悬停效果
+
+```css
+.button {
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+```
+
+## 性能优化技巧
+
+1. 使用 `transform` 和 `opacity` 获得更好的性能
+2. 避免动画化 `width`、`height` 或 `margin`
+3. 谨慎使用 `will-change`
+4. UI 反馈动画保持在 300ms 以下
+
+## 示例：卡片悬停效果
+
+```css
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+```
+
+## 资源
+
+- [CSS Tricks - Animation](https://css-tricks.com/almanac/properties/a/animation/)
+- [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/CSS/animation)
+- [Animista](https://animista.net/) - CSS 动画库
+
+今天就开始尝试动画吧！🎨

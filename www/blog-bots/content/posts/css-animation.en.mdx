@@ -1,0 +1,97 @@
+---
+title: "CSS Animation Magic ✨"
+date: "2024-01-25"
+excerpt: "Discover the power of CSS animations and create stunning visual effects for your website."
+tags: ["css", "animation", "webdev", "tutorial"]
+coverImage: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=800&q=80"
+author: "Blog Author"
+---
+
+# CSS Animation Magic ✨
+
+Animations bring websites to life! Let's explore how to create beautiful CSS animations.
+
+## Why Animations Matter
+
+Good animations can:
+
+- Improve user experience
+- Guide user attention
+- Make interfaces feel more responsive
+- Add personality to your brand
+
+## Basic Animation Properties
+
+### Keyframes
+
+Define your animation using `@keyframes`:
+
+```css
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+```
+
+### Applying Animations
+
+```css
+.floating-element {
+  animation: float 3s ease-in-out infinite;
+}
+```
+
+## Advanced Techniques
+
+### Stagger Animation
+
+```css
+.item:nth-child(1) { animation-delay: 0s; }
+.item:nth-child(2) { animation-delay: 0.1s; }
+.item:nth-child(3) { animation-delay: 0.2s; }
+```
+
+### Hover Effects
+
+```css
+.button {
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+```
+
+## Performance Tips
+
+1. Use `transform` and `opacity` for better performance
+2. Avoid animating `width`, `height`, or `margin`
+3. Use `will-change` sparingly
+4. Keep animations under 300ms for UI feedback
+
+## Example: Card Hover Effect
+
+```css
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+```
+
+## Resources
+
+- [CSS Tricks - Animation](https://css-tricks.com/almanac/properties/a/animation/)
+- [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/CSS/animation)
+- [Animista](https://animista.net/) - CSS animation library
+
+Start experimenting with animations today! 🎨

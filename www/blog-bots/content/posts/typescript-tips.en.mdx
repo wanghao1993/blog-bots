@@ -1,0 +1,126 @@
+---
+title: "TypeScript Tips & Tricks"
+date: "2024-01-30"
+excerpt: "Master TypeScript with these practical tips and best practices for better type safety."
+tags: ["typescript", "javascript", "tutorial", "best-practices"]
+coverImage: "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&q=80"
+author: "Blog Author"
+---
+
+# TypeScript Tips & Tricks
+
+Level up your TypeScript game with these practical tips!
+
+## Type Inference
+
+Let TypeScript infer types when obvious:
+
+```typescript
+// Good
+const name = "Alice"
+const count = 42
+
+// Unnecessary
+const name: string = "Alice"
+const count: number = 42
+```
+
+## Utility Types
+
+### Partial
+
+Make all properties optional:
+
+```typescript
+interface User {
+  id: string
+  name: string
+  email: string
+}
+
+type PartialUser = Partial<User>
+// { id?: string; name?: string; email?: string }
+```
+
+### Pick and Omit
+
+```typescript
+type UserPreview = Pick<User, 'id' | 'name'>
+type UserWithoutEmail = Omit<User, 'email'>
+```
+
+### Record
+
+Create object types quickly:
+
+```typescript
+type Scores = Record<string, number>
+const gameScores: Scores = {
+  player1: 100,
+  player2: 200,
+}
+```
+
+## Type Guards
+
+```typescript
+function isString(value: unknown): value is string {
+  return typeof value === 'string'
+}
+
+function process(value: unknown) {
+  if (isString(value)) {
+    // TypeScript knows value is string here
+    console.log(value.toUpperCase())
+  }
+}
+```
+
+## Const Assertions
+
+```typescript
+const colors = ['red', 'green', 'blue'] as const
+type Color = typeof colors[number]
+// 'red' | 'green' | 'blue'
+```
+
+## Generic Constraints
+
+```typescript
+function getProperty<T, K extends keyof T>(obj: T, key: K) {
+  return obj[key]
+}
+
+const person = { name: 'Alice', age: 30 }
+const name = getProperty(person, 'name') // ✓
+// const invalid = getProperty(person, 'invalid') // ✗
+```
+
+## Template Literal Types
+
+```typescript
+type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+type Endpoint = `/api/${string}`
+
+type APIRoute = `${HTTPMethod} ${Endpoint}`
+// 'GET /api/users' | 'POST /api/users' | ...
+```
+
+## Best Practices
+
+1. **Enable strict mode** in `tsconfig.json`
+2. **Avoid `any`** - use `unknown` instead
+3. **Use interfaces** for objects you extend
+4. **Use type aliases** for unions and complex types
+5. **Leverage type inference** when possible
+
+## Debugging Types
+
+```typescript
+type Debug<T> = { [K in keyof T]: T[K] }
+
+type Complex = Debug<SomeComplexType>
+// Hover to see the expanded type
+```
+
+Happy typing! 🎯

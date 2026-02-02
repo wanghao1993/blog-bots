@@ -1,0 +1,70 @@
+---
+title: "使用 Next.js 构建现代 Web 应用"
+date: "2024-01-20"
+excerpt: "学习如何使用 Next.js 和 React 构建快速、可扩展的 Web 应用程序。"
+tags: ["nextjs", "react", "教程", "web开发"]
+coverImage: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80"
+author: "博客作者"
+---
+
+# 使用 Next.js 构建现代 Web 应用
+
+Next.js 彻底改变了我们构建 React 应用的方式。让我们探索为什么它成为现代 Web 开发的首选框架。
+
+## 为什么选择 Next.js？
+
+Next.js 提供了几个关键优势：
+
+1. **服务器端渲染（SSR）**：改善 SEO 和初始加载性能
+2. **静态站点生成（SSG）**：在构建时预渲染页面
+3. **API 路由**：直接在 Next.js 应用中构建后端
+4. **基于文件的路由**：基于文件系统的直观路由
+5. **图像优化**：开箱即用的自动图像优化
+
+## 开始使用
+
+首先，创建一个新的 Next.js 应用：
+
+```bash
+npx create-next-app@latest my-app
+cd my-app
+npm run dev
+```
+
+## 关键特性
+
+### App 路由器
+
+Next.js 13+ 中的新 App 路由器提供：
+
+- React 服务器组件
+- 流式渲染
+- 嵌套布局
+- 加载 UI
+- 错误处理
+
+### 示例组件
+
+```tsx
+export default function HomePage() {
+  return (
+    <div>
+      <h1>欢迎使用 Next.js！</h1>
+      <p>构建现代 Web 应用从未如此简单。</p>
+    </div>
+  )
+}
+```
+
+## 性能优化技巧
+
+1. 使用 `<Image>` 组件优化图像
+2. 实现动态导入进行代码分割
+3. 利用 ISR（增量静态再生成）
+4. 默认使用服务器组件
+
+## 结论
+
+Next.js 提供了构建生产就绪 Web 应用所需的一切。凭借其强大的功能和出色的开发体验，它是你下一个项目的完美选择！
+
+编码愉快！🚀

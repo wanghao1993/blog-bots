@@ -1,0 +1,126 @@
+---
+title: "TypeScript 技巧与窍门"
+date: "2024-01-30"
+excerpt: "通过这些实用技巧和最佳实践掌握 TypeScript，获得更好的类型安全。"
+tags: ["typescript", "javascript", "教程", "最佳实践"]
+coverImage: "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&q=80"
+author: "博客作者"
+---
+
+# TypeScript 技巧与窍门
+
+通过这些实用技巧提升你的 TypeScript 水平！
+
+## 类型推断
+
+当类型显而易见时，让 TypeScript 自动推断：
+
+```typescript
+// 好的做法
+const name = "Alice"
+const count = 42
+
+// 不必要的
+const name: string = "Alice"
+const count: number = 42
+```
+
+## 实用类型
+
+### Partial
+
+使所有属性变为可选：
+
+```typescript
+interface User {
+  id: string
+  name: string
+  email: string
+}
+
+type PartialUser = Partial<User>
+// { id?: string; name?: string; email?: string }
+```
+
+### Pick 和 Omit
+
+```typescript
+type UserPreview = Pick<User, 'id' | 'name'>
+type UserWithoutEmail = Omit<User, 'email'>
+```
+
+### Record
+
+快速创建对象类型：
+
+```typescript
+type Scores = Record<string, number>
+const gameScores: Scores = {
+  player1: 100,
+  player2: 200,
+}
+```
+
+## 类型守卫
+
+```typescript
+function isString(value: unknown): value is string {
+  return typeof value === 'string'
+}
+
+function process(value: unknown) {
+  if (isString(value)) {
+    // TypeScript 知道这里 value 是 string
+    console.log(value.toUpperCase())
+  }
+}
+```
+
+## Const 断言
+
+```typescript
+const colors = ['red', 'green', 'blue'] as const
+type Color = typeof colors[number]
+// 'red' | 'green' | 'blue'
+```
+
+## 泛型约束
+
+```typescript
+function getProperty<T, K extends keyof T>(obj: T, key: K) {
+  return obj[key]
+}
+
+const person = { name: 'Alice', age: 30 }
+const name = getProperty(person, 'name') // ✓
+// const invalid = getProperty(person, 'invalid') // ✗
+```
+
+## 模板字面量类型
+
+```typescript
+type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+type Endpoint = `/api/${string}`
+
+type APIRoute = `${HTTPMethod} ${Endpoint}`
+// 'GET /api/users' | 'POST /api/users' | ...
+```
+
+## 最佳实践
+
+1. **启用严格模式** 在 `tsconfig.json` 中
+2. **避免 `any`** - 使用 `unknown` 替代
+3. **使用接口** 用于需要扩展的对象
+4. **使用类型别名** 用于联合类型和复杂类型
+5. **利用类型推断** 尽可能地
+
+## 调试类型
+
+```typescript
+type Debug<T> = { [K in keyof T]: T[K] }
+
+type Complex = Debug<SomeComplexType>
+// 悬停查看展开的类型
+```
+
+祝你编码愉快！🎯

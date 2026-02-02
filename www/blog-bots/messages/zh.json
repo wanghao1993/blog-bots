@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "首页",
+    "blog": "博客",
+    "about": "关于",
+    "tags": "标签",
+    "search": "搜索",
+    "readMore": "阅读更多",
+    "share": "分享",
+    "translate": "翻译",
+    "summary": "摘要",
+    "comments": "评论",
+    "backToHome": "返回首页",
+    "noResults": "没有找到结果",
+    "loading": "加载中...",
+    "darkMode": "暗色模式",
+    "lightMode": "亮色模式",
+    "reset": "恢复原文"
+  },
+  "home": {
+    "hero": {
+      "title": "科技博客 ⚡",
+      "subtitle": "探索代码、技术与创新",
+      "cta": "探索文章"
+    },
+    "latestPosts": "最新文章",
+    "allPosts": "所有文章"
+  },
+  "blog": {
+    "title": "博客文章",
+    "publishedOn": "发布于",
+    "readTime": "分钟阅读",
+    "tags": "标签"
+  },
+  "about": {
+    "title": "关于我",
+    "description": "了解更多关于这个博客及其创作者"
+  },
+  "search": {
+    "placeholder": "搜索文章...",
+    "resultsFor": "搜索结果",
+    "noResults": "没有找到匹配的文章"
+  },
+  "tags": {
+    "title": "所有标签",
+    "postsWithTag": "标签为"
+  }
+}

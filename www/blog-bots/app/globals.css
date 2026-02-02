@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 13% 97%;
+    --foreground: 220 10% 10%;
+    --card: 220 13% 100%;
+    --card-foreground: 220 10% 10%;
+    --popover: 220 13% 100%;
+    --popover-foreground: 220 10% 10%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 220 10% 20%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 10% 40%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+    --border: 220 13% 85%;
+    --input: 220 13% 85%;
+    --ring: 199 89% 48%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 220 13% 7%;
+    --foreground: 0 0% 95%;
+    --card: 220 13% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 220 13% 10%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 199 89% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 199 89% 58%;
+    --accent-foreground: 0 0% 100%;
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 199 89% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .prose-custom {
+    @apply prose prose-lg dark:prose-invert max-w-none;
+    @apply prose-headings:font-bold prose-headings:text-foreground;
+    @apply prose-p:text-foreground/90 prose-p:leading-relaxed;
+    @apply prose-a:text-primary hover:prose-a:text-primary/80 prose-a:no-underline hover:prose-a:underline;
+    @apply prose-strong:text-foreground prose-strong:font-semibold;
+    @apply prose-code:text-cyber-blue prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-[''] prose-code:after:content-[''];
+    @apply prose-pre:bg-muted prose-pre:border prose-pre:border-border;
+    @apply prose-img:rounded-lg prose-img:shadow-lg;
+    @apply prose-hr:border-border;
+    @apply prose-blockquote:border-l-primary prose-blockquote:border-l-4 prose-blockquote:bg-muted/50 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg;
+  }
+
+  .tech-button {
+    @apply relative overflow-hidden px-6 py-3 font-semibold transition-all duration-300;
+    @apply bg-gradient-to-r from-cyan-500 to-blue-600 text-white;
+    @apply hover:shadow-lg hover:shadow-cyan-500/50 hover:scale-105 active:scale-95;
+    @apply border border-cyan-400/50;
+  }
+
+  .tech-card {
+    @apply relative overflow-hidden rounded-lg bg-card border border-border;
+    @apply transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/20 hover:scale-[1.02];
+    @apply hover:border-cyan-500/50;
+  }
+
+  .cyber-grid {
+    background-image: 
+      linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  }
+
+  .floating-element {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .sparkle {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  @keyframes sparkle {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
+  }
+
+  .scan-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.8), transparent);
+    animation: scan 3s linear infinite;
+  }
+}
+

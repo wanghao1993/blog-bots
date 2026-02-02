@@ -1,0 +1,942 @@
+---
+title: "Next.js 15 Complete Guide: App Router, Server Components, and Performance Optimization"
+date: "2024-02-02"
+excerpt: "A comprehensive guide to Next.js 15, covering the App Router, React Server Components, data fetching strategies, and advanced performance optimization techniques."
+tags: ["nextjs", "react", "javascript", "webdev", "fullstack", "performance", "tutorial"]
+coverImage: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&q=80"
+author: "Tech Blog Author"
+---
+
+# Next.js 15 Complete Guide: App Router, Server Components, and Performance Optimization
+
+Next.js 15 represents a significant evolution in the React framework landscape, introducing powerful new features, improved performance, and developer experience enhancements. In this comprehensive guide, we'll explore everything from the fundamentals of the App Router to advanced optimization techniques, helping you build fast, scalable, and maintainable web applications.
+
+## Introduction to Next.js 15
+
+Next.js 15 builds upon the foundations laid by previous versions, with a strong focus on the App Router, React Server Components, and enhanced tooling. Let's explore what's new and improved.
+
+### Key Features in Next.js 15
+
+1. **Enhanced App Router**: More stable and feature-complete implementation
+2. **React 19 Compatibility**: Full support for the latest React features
+3. **Improved Turbopack**: Faster builds and Hot Module Replacement (HMR)
+4. **Advanced Caching Strategies**: More granular control over caching behavior
+5. **Better Error Handling**: Enhanced error boundaries and debugging
+6. **Optimized Images**: Improved Image component with better defaults
+7. **Internationalization**: Enhanced i18n routing and localization
+
+### Getting Started with Next.js 15
+
+Create a new Next.js 15 project:
+
+```bash
+npx create-next-app@latest my-app --typescript --tailwind --app
+cd my-app
+npm run dev
+```
+
+The `--app` flag sets up the project with the App Router by default, which is now the recommended approach for all new projects.
+
+## The App Router: A Paradigm Shift
+
+The App Router (introduced in Next.js 13) has matured significantly in version 15. It represents a fundamental shift in how we structure Next.js applications.
+
+### File-based Routing with Conventions
+
+The App Router uses a file-system based router with specific conventions:
+
+```
+app/
+├── layout.tsx           # Root layout
+├── page.tsx            # Home page
+├── blog/
+│   ├── page.tsx        # Blog listing
+│   ├── [slug]/
+│   │   └── page.tsx    # Individual blog post
+│   └── loading.tsx     # Blog section loading UI
+├── about/
+│   └── page.tsx        # About page
+└── api/
+    └── route.ts        # API route
+```
+
+### Layouts and Nested Layouts
+
+Layouts allow you to share UI between routes while preserving state:
+
+```tsx
+// app/dashboard/layout.tsx
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="dashboard-layout">
+      <Sidebar />
+      <main className="dashboard-main">
+        {children}
+      </main>
+    </div>
+  );
+}
+```
+
+### Loading and Error Boundaries
+
+Special files for handling loading states and errors:
+
+```tsx
+// app/blog/loading.tsx
+export default function BlogLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+    </div>
+  );
+}
+
+// app/blog/error.tsx
+'use client';
+
+export default function BlogError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h2 className="text-2xl font-bold mb-4">Something went wrong!</h2>
+      <button
+        onClick={() => reset()}
+        className="px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Try again
+      </button>
+    </div>
+  );
+}
+```
+
+## React Server Components (RSC)
+
+Server Components are one of the most significant innovations in Next.js 15, allowing components to be rendered on the server and sent to the client as minimal HTML.
+
+### Understanding Server and Client Components
+
+**Server Components:**
+- Render exclusively on the server
+- Have access to server-side resources (databases, file systems, etc.)
+- Don't include client-side JavaScript in the bundle
+- Can't use browser-only APIs or React state/effects
+
+**Client Components:**
+- Render on both server and client
+- Can use browser APIs, React state, and effects
+- Include JavaScript in the client bundle
+- Marked with `'use client'` directive
+
+### When to Use Each
+
+```tsx
+// Server Component (default)
+import { db } from '@/lib/db';
+
+export default async function ProductPage({ id }: { id: string }) {
+  // Direct database access - only possible in Server Components
+  const product = await db.products.findUnique({ where: { id } });
+  
+  return (
+    <div>
+      <h1>{product.name}</h1>
+      <p>{product.description}</p>
+      {/* Client Component for interactivity */}
+      <AddToCartButton productId={product.id} />
+    </div>
+  );
+}
+
+// Client Component
+'use client';
+
+import { useState } from 'react';
+
+export function AddToCartButton({ productId }: { productId: string }) {
+  const [quantity, setQuantity] = useState(1);
+  
+  const addToCart = () => {
+    // Client-side interaction
+    console.log(`Adding ${quantity} of product ${productId} to cart`);
+  };
+  
+  return (
+    <button onClick={addToCart} className="bg-blue-500 text-white px-4 py-2 rounded">
+      Add to Cart
+    </button>
+  );
+}
+```
+
+### Streaming and Suspense
+
+Next.js 15 supports streaming responses with React Suspense:
+
+```tsx
+import { Suspense } from 'react';
+
+export default function DashboardPage() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <Suspense fallback={<div>Loading revenue...</div>}>
+        <RevenueChart />
+      </Suspense>
+      <Suspense fallback={<div>Loading user data...</div>}>
+        <UserList />
+      </Suspense>
+    </div>
+  );
+}
+
+async function RevenueChart() {
+  // Simulate slow data fetch
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  const revenue = await fetchRevenueData();
+  
+  return <div>Revenue: ${revenue}</div>;
+}
+
+async function UserList() {
+  const users = await fetchUsers();
+  
+  return (
+    <ul>
+      {users.map(user => (
+        <li key={user.id}>{user.name}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## Data Fetching Strategies
+
+Next.js 15 provides multiple approaches to data fetching, each suited for different use cases.
+
+### Server-side Data Fetching
+
+**Using async/await in Server Components:**
+
+```tsx
+export default async function BlogPage() {
+  const posts = await fetch('https://api.example.com/posts', {
+    cache: 'no-store', // Don't cache
+  }).then(res => res.json());
+  
+  return (
+    <div>
+      {posts.map(post => (
+        <article key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.excerpt}</p>
+        </article>
+      ))}
+    </div>
+  );
+}
+```
+
+### Client-side Data Fetching
+
+**Using SWR or React Query:**
+
+```tsx
+'use client';
+
+import useSWR from 'swr';
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
+export default function ClientSidePage() {
+  const { data, error, isLoading } = useSWR(
+    '/api/posts',
+    fetcher,
+    {
+      refreshInterval: 5000, // Refetch every 5 seconds
+      revalidateOnFocus: true,
+    }
+  );
+  
+  if (error) return <div>Failed to load</div>;
+  if (isLoading) return <div>Loading...</div>;
+  
+  return (
+    <div>
+      {data.map(post => (
+        <div key={post.id}>{post.title}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Incremental Static Regeneration (ISR)
+
+ISR allows you to update static content without rebuilding the entire site:
+
+```tsx
+export default async function ProductPage({ params }: { params: { id: string } }) {
+  const product = await fetch(`https://api.example.com/products/${params.id}`, {
+    next: { revalidate: 3600 }, // Revalidate every hour
+  }).then(res => res.json());
+  
+  return (
+    <div>
+      <h1>{product.name}</h1>
+      <p>{product.description}</p>
+    </div>
+  );
+}
+
+export async function generateStaticParams() {
+  const products = await fetch('https://api.example.com/products').then(res => res.json());
+  
+  return products.map(product => ({
+    id: product.id.toString(),
+  }));
+}
+```
+
+## Performance Optimization
+
+Next.js 15 includes numerous optimizations out of the box, but understanding how to leverage them is key to building fast applications.
+
+### Image Optimization
+
+The `next/image` component is significantly improved in Next.js 15:
+
+```tsx
+import Image from 'next/image';
+
+export default function OptimizedImage() {
+  return (
+    <Image
+      src="/hero.jpg"
+      alt="Hero image"
+      width={1200}
+      height={800}
+      priority // Load above the fold images immediately
+      quality={85} // Adjust quality
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      placeholder="blur" // Optional blur-up placeholder
+      blurDataURL="data:image/jpeg;base64,..."
+      className="rounded-lg shadow-xl"
+    />
+  );
+}
+```
+
+### Font Optimization
+
+Next.js 15 has built-in font optimization:
+
+```tsx
+import { Inter, Roboto_Mono } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
+});
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
+      <body className="font-sans">
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+### Code Splitting and Dynamic Imports
+
+Dynamic imports help reduce initial bundle size:
+
+```tsx
+import dynamic from 'next/dynamic';
+
+const HeavyChart = dynamic(
+  () => import('@/components/HeavyChart'),
+  {
+    ssr: false, // Don't server-render
+    loading: () => <div>Loading chart...</div>,
+  }
+);
+
+const MapComponent = dynamic(
+  () => import('@/components/MapComponent'),
+  {
+    loading: () => <div>Loading map...</div>,
+  }
+);
+
+export default function Dashboard() {
+  return (
+    <div>
+      <HeavyChart />
+      <MapComponent />
+    </div>
+  );
+}
+```
+
+### Caching Strategies
+
+Next.js 15 provides multiple caching layers:
+
+```tsx
+// Server Component with caching
+export default async function CachedPage() {
+  // Cache for 1 hour (ISR)
+  const data = await fetch('https://api.example.com/data', {
+    next: { revalidate: 3600 },
+  }).then(res => res.json());
+  
+  // Cache indefinitely (static)
+  const staticData = await fetch('https://api.example.com/static-data', {
+    next: { revalidate: false },
+  }).then(res => res.json());
+  
+  // Don't cache (dynamic)
+  const dynamicData = await fetch('https://api.example.com/dynamic-data', {
+    cache: 'no-store',
+  }).then(res => res.json());
+  
+  // Cache with tags for on-demand revalidation
+  const taggedData = await fetch('https://api.example.com/tagged-data', {
+    next: { tags: ['products'] },
+  }).then(res => res.json());
+  
+  return (
+    <div>
+      {/* Content */}
+    </div>
+  );
+}
+
+// On-demand revalidation
+import { revalidateTag } from 'next/cache';
+
+export async function POST(request: Request) {
+  const data = await request.json();
+  
+  // Update database
+  await db.products.update(data);
+  
+  // Revalidate cached data with 'products' tag
+  revalidateTag('products');
+  
+  return Response.json({ success: true });
+}
+```
+
+## API Routes and Server Actions
+
+Next.js 15 enhances both traditional API routes and the newer Server Actions.
+
+### API Routes
+
+API routes in the App Router use a different structure:
+
+```tsx
+// app/api/users/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const page = searchParams.get('page') || '1';
+  
+  const users = await db.users.findMany({
+    take: 10,
+    skip: (parseInt(page) - 1) * 10,
+  });
+  
+  return NextResponse.json(users);
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  
+  const user = await db.users.create({
+    data: body,
+  });
+  
+  return NextResponse.json(user, { status: 201 });
+}
+```
+
+### Server Actions
+
+Server Actions allow you to call server functions directly from client components:
+
+```tsx
+// app/actions.ts
+'use server';
+
+import { db } from '@/lib/db';
+import { revalidatePath } from 'next/cache';
+
+export async function createPost(formData: FormData) {
+  const title = formData.get('title') as string;
+  const content = formData.get('content') as string;
+  
+  await db.posts.create({
+    data: {
+      title,
+      content,
+      published: true,
+    },
+  });
+  
+  revalidatePath('/blog');
+}
+
+// app/components/CreatePostForm.tsx
+'use client';
+
+import { createPost } from '@/app/actions';
+
+export default function CreatePostForm() {
+  return (
+    <form action={createPost} className="space-y-4">
+      <div>
+        <label htmlFor="title" className="block text-sm font-medium">
+          Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          required
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+        />
+      </div>
+      
+      <div>
+        <label htmlFor="content" className="block text-sm font-medium">
+          Content
+        </label>
+        <textarea
+          id="content"
+          name="content"
+          rows={4}
+          required
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+        />
+      </div>
+      
+      <button
+        type="submit"
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      >
+        Create Post
+      </button>
+    </form>
+  );
+}
+```
+
+## State Management in Next.js 15
+
+With Server Components, state management patterns have evolved.
+
+### Server State vs Client State
+
+**Server State:**
+- Data fetched from APIs or databases
+- Managed by Server Components and caching strategies
+- Shared across users (when appropriate)
+- Example: Blog posts, product listings
+
+**Client State:**
+- UI state, form inputs, user preferences
+- Managed with React state, Context, or state management libraries
+- Specific to each user session
+- Example: Dark mode preference, shopping cart items
+
+### Recommended Libraries
+
+1. **React Query / TanStack Query**: For server state management
+2. **Zustand**: Lightweight client state management
+3. **Jotai**: Atomic state management
+4. **Redux Toolkit**: For complex state needs
+
+### Example with Zustand
+
+```tsx
+// stores/cart-store.ts
+import { create } from 'zustand';
+
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+interface CartStore {
+  items: CartItem[];
+  addItem: (item: Omit<CartItem, 'quantity'>) => void;
+  removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
+  total: number;
+}
+
+export const useCartStore = create<CartStore>((set, get) => ({
+  items: [],
+  addItem: (item) => {
+    const { items } = get();
+    const existingItem = items.find(i => i.id === item.id);
+    
+    if (existingItem) {
+      set({
+        items: items.map(i =>
+          i.id === item.id
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
+        ),
+      });
+    } else {
+      set({ items: [...items, { ...item, quantity: 1 }] });
+    }
+  },
+  removeItem: (id) => {
+    set({ items: get().items.filter(i => i.id !== id) });
+  },
+  updateQuantity: (id, quantity) => {
+    set({
+      items: get().items.map(i =>
+        i.id === id ? { ...i, quantity } : i
+      ),
+    });
+  },
+  clearCart: () => {
+    set({ items: [] });
+  },
+  get total() {
+    return get().items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  },
+}));
+
+// app/components/Cart.tsx
+'use client';
+
+import { useCartStore } from '@/stores/cart-store';
+
+export default function Cart() {
+  const { items, removeItem, updateQuantity, total } = useCartStore();
+  
+  return (
+    <div className="border rounded-lg p-4">
+      <h2 className="text-xl font-bold mb-4">Shopping Cart</h2>
+      
+      {items.length === 0 ? (
+        <p className="text-gray-500">Your cart is empty</p>
+      ) : (
+        <>
+          <ul className="space-y-2">
+            {items.map(item => (
+              <li key={item.id} className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-medium">{item.name}</h3>
+                  <p className="text-sm text-gray-500">${item.price} × {item.quantity}</p>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    className="px-2 py-1 border rounded"
+                    disabled={item.quantity <= 1}
+                  >
+                    -
+                  </button>
+                  
+                  <span>{item.quantity}</span>
+                  
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    className="px-2 py-1 border rounded"
+                  >
+                    +
+                  </button>
+                  
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="ml-4 text-red-500 hover:text-red-700"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          
+          <div className="mt-4 pt-4 border-t">
+            <div className="flex justify-between font-bold">
+              <span>Total:</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+```
+
+## Authentication and Authorization
+
+Next.js 15 works well with various authentication solutions.
+
+### Using NextAuth.js
+
+NextAuth.js is a popular authentication library for Next.js:
+
+```tsx
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth from 'next-auth';
+import GitHubProvider from 'next-auth/providers/github';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { db } from '@/lib/db';
+
+export const authOptions = {
+  adapter: PrismaAdapter(db),
+  providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+    }),
+  ],
+  callbacks: {
+    async session({ session, user }) {
+      session.user.id = user.id;
+      return session;
+    },
+  },
+};
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
+
+// app/providers.tsx
+'use client';
+
+import { SessionProvider } from 'next-auth/react';
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <SessionProvider>{children}</SessionProvider>;
+}
+
+// app/layout.tsx
+import { Providers } from './providers';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  );
+}
+
+// app/components/AuthButton.tsx
+'use client';
+
+import { signIn, signOut, useSession } from 'next-auth/react';
+
+export default function AuthButton() {
+  const { data: session, status } = useSession();
+  
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+  
+  if (session) {
+    return (
+      <div className="flex items-center gap-4">
+        <span>Hello, {session.user?.name}</span>
+        <button
+          onClick={() => signOut()}
+          className="px-4 py-2 border rounded"
+        >
+          Sign Out
+        </button>
+      </div>
+    );
+  }
+  
+  return (
+    <button
+      onClick={() => signIn('github')}
+      className="px-4 py-2 bg-black text-white rounded"
+    >
+      Sign in with GitHub
+    </button>
+  );
+}
+```
+
+## Testing in Next.js 15
+
+Next.js 15 has excellent testing support with Jest, React Testing Library, and Playwright.
+
+### Unit Testing with Jest
+
+```tsx
+// __tests__/components/Button.test.tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import Button from '@/components/Button';
+
+describe('Button', () => {
+  it('renders correctly', () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByText('Click me')).toBeInTheDocument();
+  });
+  
+  it('handles clicks', () => {
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+    
+    fireEvent.click(screen.getByText('Click me'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+### Integration Testing with Playwright
+
+```tsx
+// e2e/homepage.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('homepage loads correctly', async ({ page }) => {
+  await page.goto('/');
+  
+  // Check title
+  await expect(page).toHaveTitle(/Next.js App/);
+  
+  // Check navigation
+  await expect(page.getByRole('link', { name: 'Home' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Blog' })).toBeVisible();
+  
+  // Check main content
+  await expect(page.getByRole('heading', { name: 'Welcome' })).toBeVisible();
+});
+
+test('navigation works', async ({ page }) => {
+  await page.goto('/');
+  
+  // Click blog link
+  await page.getByRole('link', { name: 'Blog' }).click();
+  
+  // Should be on blog page
+  await expect(page).toHaveURL(/\/blog/);
+  await expect(page.getByRole('heading', { name: 'Blog Posts' })).toBeVisible();
+});
+```
+
+## Deployment and Monitoring
+
+### Deployment Options
+
+1. **Vercel**: The creators of Next.js, offering seamless deployment
+2. **Netlify**: Great alternative with similar features
+3. **AWS**: Using Amplify or custom setups with EC2/Lambda
+4. **Docker**: Containerized deployment for full control
+
+### Environment Variables
+
+```bash
+# .env.local
+DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret-key"
+GITHUB_ID="your-github-id"
+GITHUB_SECRET="your-github-secret"
+```
+
+### Monitoring and Analytics
+
+1. **Vercel Analytics**: Built-in analytics for Vercel deployments
+2. **Google Analytics**: Traditional web analytics
+3. **Sentry**: Error tracking and performance monitoring
+4. **LogRocket**: Session replay and debugging
+
+## Best Practices and Common Pitfalls
+
+### Best Practices
+
+1. **Use TypeScript**: Next.js has excellent TypeScript support
+2. **Follow the App Router**: It's the future of Next.js
+3. **Leverage Server Components**: Reduce client bundle size
+4. **Implement Proper Caching**: Use ISR and revalidation strategies
+5. **Optimize Images**: Always use the `next/image` component
+6. **Code Split**: Use dynamic imports for large components
+7. **Test Thoroughly**: Unit, integration, and E2E tests
+
+### Common Pitfalls
+
+1. **Mixing Server and Client Directives Incorrectly**
+2. **Over-fetching or Under-fetching Data**
+3. **Not Implementing Proper Error Boundaries**
+4. **Ignoring Accessibility (a11y)**
+5. **Skipping Performance Optimization**
+6. **Not Handling Loading States**
+7. **Poor Caching Strategies**
+
+## Conclusion
+
+Next.js 15 represents a mature, production-ready framework that combines the best of React with powerful server-side capabilities. By embracing the App Router, Server Components, and the performance optimizations available, you can build applications that are fast, scalable, and maintainable.
+
+The key to success with Next.js 15 is understanding the new mental model it introduces. Server Components change how we think about component architecture, and the App Router provides a more intuitive way to structure applications.
+
+As you continue your Next.js journey, remember to:
+1. **Stay updated**: Next.js evolves rapidly
+2. **Experiment**: Try new features in smaller projects first
+3. **Measure**: Always profile and measure performance
+4. **Contribute**: The Next.js community is active and welcoming
+
+Happy coding with Next.js 15! 🚀
+
+## Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Server Components RFC](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md)
+- [Next.js GitHub Repository](https://github.com/vercel/next.js)
+- [Vercel Platform](https://vercel.com)
+- [Next.js Discord Community](https://nextjs.org/discord)
+- [Awesome Next.js](https://github.com/unicodeveloper/awesome-nextjs) - Curated list of Next.js resources
